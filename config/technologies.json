@@ -1,0 +1,30 @@
+[
+    {
+      "id": "frontend",
+      "name": "Frontend",
+      "description": "Фронтенд-разработка",
+      "languages": ["JavaScript", "TypeScript", "Dart"],
+      "default_language": "JavaScript"
+    },
+    {
+      "id": "backend",
+      "name": "Backend",
+      "description": "Бэкенд-разработка",
+      "languages": ["Python", "JavaScript", "Java", "Go", "C#"],
+      "default_language": "Python"
+    },
+    {
+      "id": "mobile",
+      "name": "Mobile",
+      "description": "Мобильная разработка",
+      "languages": ["JavaScript", "Dart", "Kotlin", "Swift"],
+      "default_language": "JavaScript"
+    },
+    {
+      "id": "ai",
+      "name": "AI/ML",
+      "description": "Искусственный интеллект",
+      "languages": ["Python", "R"],
+      "default_language": "Python"
+    }
+  ]

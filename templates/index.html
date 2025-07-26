@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Генератор промтов без кода</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Генератор промтов для разработчиков</h1>
+
+    <div class="form-group">
+      <label for="technology">Технология:</label>
+      <select id="technology" onchange="loadFrameworks()">
+        <option value="">-- Выберите технологию --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="framework">Библиотека / Фреймворк:</label>
+      <select id="framework" onchange="loadLanguages()">
+        <option value="">-- Сначала выберите технологию --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="language">Язык программирования:</label>
+      <select id="language">
+        <option value="">-- Сначала выберите фреймворк --</option>
+      </select>
+    </div>
+
+    <button onclick="generatePrompt()" class="btn">Сгенерировать промт</button>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    // Загрузка технологий при старте
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/technologies')
+        .then(res => res.json())
+        .then(technologies => {
+          const techSelect = document.getElementById('technology');
+          technologies.forEach(tech => {
+            const option = document.createElement('option');
+            option.value = tech.id;
+            option.textContent = tech.name;
+            techSelect.appendChild(option);
+          });
+        })
+        .catch(err => showError("Не удалось загрузить технологии"));
+    });
+
+    // Загрузка библиотек по технологии
+    function loadFrameworks() {
+      const tech = document.getElementById('technology').value;
+      const frameworkSelect = document.getElementById('framework');
+      const languageSelect = document.getElementById('language');
+      
+      frameworkSelect.innerHTML = '<option value="">-- Выберите --</option>';
+      languageSelect.innerHTML = '<option value="">-- Сначала выберите фреймворк --</option>';
+
+      if (!tech) return;
+
+      fetch(`/api/frameworks/${tech}`)
+        .then(res => res.json())
+        .then(frameworks => {
+          frameworks.forEach(fw => {
+            const option = document.createElement('option');
+            option.value = fw.id;
+            option.textContent = fw.name;
+            frameworkSelect.appendChild(option);
+          });
+        })
+        .catch(err => showError("Не удалось загрузить библиотеки"));
+    }
+
+    // Загрузка языков по фреймворку
+    function loadLanguages() {
+      const tech = document.getElementById('technology').value;
+      const framework = document.getElementById('framework').value;
+      const languageSelect = document.getElementById('language');
+      
+      languageSelect.innerHTML = '<option value="">-- Выберите --</option>';
+
+      if (!tech || !framework) return;
+
+      fetch(`/api/languages/${tech}/${framework}`)
+        .then(res => res.json())
+        .then(languages => {
+          languages.forEach(lang => {
+            const option = document.createElement('option');
+            option.value = lang;
+            option.textContent = capitalize(lang);
+            languageSelect.appendChild(option);
+          });
+        })
+        .catch(err => showError("Не удалось загрузить языки"));
+    }
+
+    // Генерация промта
+    function generatePrompt() {
+      const tech = document.getElementById('technology').value;
+      const framework = document.getElementById('framework').value;
+      const language = document.getElementById('language').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!tech || !framework || !language) {
+        showError("Выберите технологию, фреймворк и язык");
+        return;
+      }
+
+      resultDiv.innerHTML = '<p>Генерация...</p>';
+
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ technology: tech, framework: framework, language: language })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            showError(data.error);
+          } else {
+            resultDiv.innerHTML = `
+              <h3>Ваш промт:</h3>
+              <textarea rows="6" class="prompt-box">${data.prompt}</textarea>
+              <button onclick="copyToClipboard()">Копировать</button>
+            `;
+          }
+        })
+        .catch(err => showError("Ошибка при генерации"));
+    }
+
+    // Копирование в буфер
+    function copyToClipboard() {
+      const textarea = document.querySelector('.prompt-box');
+      textarea.select();
+      document.execCommand('copy');
+      alert('Скопировано в буфер!');
+    }
+
+    // Вспомогательные функции
+    function showError(msg) {
+      document.getElementById('result').innerHTML = `<p class="error">${msg}</p>`;
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+</body>
+</html>

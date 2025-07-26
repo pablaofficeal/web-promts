@@ -1,0 +1,23 @@
+{
+    "frontend": [
+      { "id": "react", "name": "React", "type": "library", "languages": ["javascript", "typescript"] },
+      { "id": "vue", "name": "Vue", "type": "framework", "languages": ["javascript", "typescript"] },
+      { "id": "angular", "name": "Angular", "type": "framework", "languages": ["typescript"] }
+    ],
+    "backend": [
+      { "id": "flask", "name": "Flask", "languages": ["python"] },
+      { "id": "django", "name": "Django", "languages": ["python"] },
+      { "id": "express", "name": "Express", "languages": ["javascript", "typescript"] },
+      { "id": "spring", "name": "Spring Boot", "languages": ["java"] }
+    ],
+    "mobile": [
+      { "id": "react-native", "name": "React Native", "languages": ["javascript", "typescript"] },
+      { "id": "flutter", "name": "Flutter", "languages": ["dart"] },
+      { "id": "swiftui", "name": "SwiftUI", "languages": ["swift"] }
+    ],
+    "ai": [
+      { "id": "pytorch", "name": "PyTorch", "languages": ["python"] },
+      { "id": "tensorflow", "name": "TensorFlow", "languages": ["python"] },
+      { "id": "scikit-learn", "name": "Scikit-learn", "languages": ["python"] }
+    ]
+  }
